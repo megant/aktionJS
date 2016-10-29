@@ -269,11 +269,9 @@ var Aktion = function(customConfig) {
         getDelegatorDOMElement: function (source_selector) {
 
             if (source_selector == 'window') {
-                return document.defaultView;
-            } else if (null !== document.querySelector(source_selector)) {
                 return false;
             } else {
-                return document;
+                return $('body');
             }
         },
 
@@ -817,8 +815,8 @@ var Aktion = function(customConfig) {
         if (null !== element.source_selector &&
             (delegator = Helpers.getDelegatorDOMElement(element.source_selector))) {
 
-            $(delegator).delegate(element.source_selector, element.event, function (event, elm) {
-                addToActionQueue(element, elm);
+            delegator.delegate(element.source_selector, element.event, function (event) {
+                addToActionQueue(element, event.target);
             });
         } else {
             element.sourceElm.on(element.event, function (event) {
@@ -834,12 +832,13 @@ var Aktion = function(customConfig) {
      */
     var handleCommonActions = function(element) {
         // Native events
+
         if (null !== element.source_selector &&
             (delegator = Helpers.getDelegatorDOMElement(element.source_selector))) {
 
-            $(delegator).delegate(element.source_selector, element.event, function (event, elm) {
+            delegator.delegate(element.source_selector, element.event, function (event) {
                 if (element.extra_condition()) {
-                    addToActionQueue(element, elm);
+                    addToActionQueue(element, event.target);
                 }
             });
         } else {
