@@ -1,14 +1,24 @@
 # aktionJS
 
 ## Create complex interactions only in HTML5 and CSS3
+### _(for sitebuilders who don't plan to understand a single line of javascript ever)_
 
 Long story short, it's simply:
+
+```html
+<button data-aktion-value="newClass">Click me and my class will change!</button>
+
+<!-- Results -->
+<button data-aktion-value="newClass" class="newClass">Click me and my class will change!</button>
+```
+
+or:
 
 ```html
 <div>Class comes here!</div>
 <button data-aktion-value="newClass" 
         data-aktion-destination-selector="div">
-        Click me and I will add a class to the div!
+        Click me and I will change the class of the div!
 <button>
 
 <!-- Results -->
@@ -18,15 +28,16 @@ Long story short, it's simply:
 or:
 
 ```html
-<div class="changeMe">Change my visibility please!</div>
+<div class="changeMe hidden">I'm visible!</div>
 <button data-aktion-value="hidden" 
-        data-aktion-type="toggle"
+        data-aktion-type="remove"
+        data-aktion-event="mouseover"
         data-aktion-destination-selector=".changeMe">
-        Click me and I will change the visibility of that div!
+        Hover me and I will show that div!
 <button>
 
 <!-- Toggles -->
-<div class="changeMe hidden">Change my visibility please!</div>
+<div class="changeMe">I'm visible!</div>
 ```
 
 The only thing you have to do to make it come true is:
@@ -39,6 +50,54 @@ The only thing you have to do to make it come true is:
     });
 </script>
 ```
+
+### How does it work?
+#### The basics
+
+First of all choose an HTML element you want to make interactive! You must determine a _"source"_ and a _"destination"_ HTML element first. It means you want to invoke an action to the _destination_ by doing something on the _source_. Let's say you have a button! That's your _source_. Sources are defined by the **data-aktion-soure-selector** HTML attribute with a valid CSS selector. According to the nature of CSS selectors, _source_ (and _destination_) can represent one or more DOM elements. The _destination_ is defined by **data-aktion-destination-selector**. It's like:
+
+```html
+<button
+    data-aktion-source-selector="button"
+    data-aktion-destination-selector="button">
+    I'm the "source"
+</button>
+```
+
+Of course in this case you can omit source or destination attributes. If you don't want to use **data-aktion-source-selector**, it means the _source_ is automatically the button element itself.
+
+```html
+<button
+    data-aktion-destination-selector=".destination-element">
+    I'm the "source"
+</button>
+<div class="destination-element"></div>
+```
+
+If you omit **data-aktion-destination-selector** attribute, it means the _destination_ is automatically selected by **data-aktion-source-selector** (in this case the button itsef, because source selector is also omitted).
+
+```html
+<button>
+    I'm the "source" and the "destination"
+</button>
+```
+
+OK. Let's do something real with that _destination_, giving a class to it for example. In the _source_, **data-aktion-attribute** determines the _destination's_ HTML attribute which will be affected by the invoked action. It should be the "class" value in our case. _Source's_ **data-aktion-value** contains the value which will be given to _destination_ someway. Now it's the name of the class ("newClass").
+
+```html
+<button
+    data-aktion-attribute="class"
+    data-aktion-value="newClass"
+    data-aktion-destination-selector=".destination-element">
+    I'm the "source"
+</button>
+<div class="destination-element"></div>
+
+<!-- Click on the button results -->
+<div class="destination-element newClass"></div>
+```
+
+Because the default **data-aktion-attribute** is "class", omitting that will result the same in the example above. 
 
 ### Usable data-aktion-* attributes
 
@@ -55,3 +114,8 @@ The only thing you have to do to make it come true is:
 - **data-aktion-attribute**: The attribute of the destination DOM element, which will be affected _(default: 'class')_
 - **data-aktion-interval-time**: Time of the function calling interval (in milliseconds). Currently used at custom scroll event checking _(default: 100)_
 - **data-aktion-extra-condition**: Function name which determines extra condition for the execution of the action _(default: true)_
+
+### Known limitations/issues
+
+- **data-aktion-type="trigger-event"** cannot trigger scroll events (because those are not classical events)
+- Event delegation is attached to **"body"** DOM element (not document)
