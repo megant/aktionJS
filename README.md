@@ -52,6 +52,6 @@ The only thing you have to do to make it come true is:
 - **data-aktion-destination-selector**: A valid DOM selector which determines the destination DOM element(s) _(default: this)_
 - **data-aktion-trigger-before**: Action will trigger before this named action, which has the same source selector _(default: false)_
 - **data-aktion-trigger-after**: Action will trigger after this named action, which has the same source selector _(default: false)_
-- **data-aktion-attribute**: The attribute of the destination DOM element, which will be affected (if data-aktion-value-type is not _"event"_) _(default: 'class')_
+- **data-aktion-attribute**: The attribute of the destination DOM element, which will be affected _(default: 'class')_
 - **data-aktion-interval-time**: Time of the function calling interval (in milliseconds). Currently used at custom scroll event checking _(default: 100)_
 - **data-aktion-extra-condition**: Function name which determines extra condition for the execution of the action _(default: true)_
