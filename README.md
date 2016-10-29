@@ -40,6 +40,8 @@ or:
 <div class="changeMe">I'm visible!</div>
 ```
 
+[Check out some cool examples!](#wanna-play-with-some-cool-examples?)
+
 The only thing you have to do to make it come true is:
 
 ```html
@@ -97,7 +99,7 @@ OK. Let's do something real with that _destination_, giving a class to it for ex
 <div class="destination-element newClass"></div>
 ```
 
-Because the default **data-aktion-attribute** is "class", omitting that will result the same as the example above. As you may notice the class name not only added but also removed when button was clicked. This effect originates from the **data-aktion-type** attribute which has the _"toggle"_ default value. So if I only want to add that class name for the first time when action is invoking and don't need toggling effect later, it looks like:
+Because the default **data-aktion-attribute** is "class", omitting that will result the same in the example above. As you may notice the class name not only added but also removed when button was clicked. This effect originates from the **data-aktion-type** attribute which has the _"toggle"_ default value. So if I only want to add that class name for the first time when action is invoking and don't need toggling effect later, it looks like:
 
 ```html
 <button
@@ -127,7 +129,7 @@ But what can I do if I want to associate aktions with events other than _"click"
 #### Advanced usage
 ##### Wanna play with some cool examples?
 
-Here comes jsfiddle links soon..
+- [Simple button toggle class]
 
 ### Available data-aktion-* attributes
 
@@ -171,5 +173,7 @@ _(can be used in data-aktion-event attribute)_
 
 ### Known limitations/issues
 
-- **data-aktion-type="trigger-event"** cannot trigger custom scroll events (because those are not classical events)
+- **data-aktion-type="trigger-event"** cannot trigger scroll events (because those are not classical events)
 - Event delegation is attached to **"body"** DOM element (not document)
+
+[Simple button toggle class]: <https://jsfiddle.net/megant/c1y7d9k1/13/>
