@@ -564,14 +564,25 @@ var Aktion = function(customConfig) {
      */
     var triggerActions = function () {
 
-        var action;
+        var action, callback;
+        var callbackQueue = [];
 
         for (var idx in actionOrder) {
             action = actionQueue[actionOrder[idx]];
-            triggerAction(action.element, action._this);
+            callback = triggerAction(action.element, action._this);
+
+            if (false !== callback) {
+                callbackQueue.push(callback);
+            }
         }
 
         resetActionQueue();
+
+        if (callbackQueue.length) {
+            Helpers.forEach(callbackQueue, function(cb, idx) {
+                cb();
+            });
+        }
     }
 
     /**
@@ -579,6 +590,8 @@ var Aktion = function(customConfig) {
      *
      * @param {object|int} element The element object/index of the current scroll_element (from scrollElements)
      * @param {object} _this The DOM element of the current source element
+     *
+     * @returns {function|boolean} Callback function or false if no callback present
      */
     var triggerAction = function (element, _this) {
 
@@ -647,8 +660,12 @@ var Aktion = function(customConfig) {
                     $this.setAttribute(element.attribute, action_value);
                 });
             }
+
+            return false;
         } else {
-            $((element.destination_selector === null) ? element.source_selector : element.destination_selector).trigger(value_data);
+            return function() {
+                $((element.destination_selector === null) ? element.source_selector : element.destination_selector).trigger(value_data)
+            };
         }
     }
 
