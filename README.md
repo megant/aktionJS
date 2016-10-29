@@ -97,7 +97,7 @@ OK. Let's do something real with that _destination_, giving a class to it for ex
 <div class="destination-element newClass"></div>
 ```
 
-Because the default **data-aktion-attribute** is "class", omitting that will result the same in the example above. As you may notice the class name not only added but also removed when button was clicked. This effect originates from the **data-aktion-type** attribute which has the _"toggle"_ default value. So if I only want to add that class name for the first time when action is invoking and don't need toggling effect later, it looks like:
+Because the default **data-aktion-attribute** is "class", omitting that will result the same as the example above. As you may notice the class name not only added but also removed when button was clicked. This effect originates from the **data-aktion-type** attribute which has the _"toggle"_ default value. So if I only want to add that class name for the first time when action is invoking and don't need toggling effect later, it looks like:
 
 ```html
 <button
