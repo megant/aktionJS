@@ -450,6 +450,10 @@ var Aktion = function(customConfig) {
             direction = null;
         }
 
+        if (null === direction && element.lastDirection === null) {
+            return false;
+        }
+
         // Browser's top position bouncing is not a scroll event
         if (element.scrollContainer.scrollTop < 0 || element.scrollContainer.scrollTop + Helpers.getOuterHeight(element.scrollContent) > Helpers.getDocumentDimension('height')) {
             return false;
@@ -459,8 +463,8 @@ var Aktion = function(customConfig) {
             case 'scroll-start':
                 condition = (null === element.lastY && element.scrollContainer.scrollTop > 0);
                 break;
-            case 'scroll-end':
-                condition = (null === direction);
+            case 'scroll-stop':
+                condition = (null !== element.lastY && null === direction);
                 break;
             case 'scroll':
                 condition = (null !== element.lastY && null !== direction);
@@ -490,7 +494,7 @@ var Aktion = function(customConfig) {
         }
 
         scrollElements[index].lastDirection = direction;
-        scrollElements[index].lastY = (element.event == 'scroll-end') ? null : element.scrollContainer.scrollTop;
+        scrollElements[index].lastY = element.scrollContainer.scrollTop;
 
         return (element.extra_condition() && condition);
     }
@@ -777,6 +781,7 @@ var Aktion = function(customConfig) {
                 if (null !== scrollInterval) {
                     clearInterval(scrollInterval);
                     scrollInterval = null;
+                    element.lastY = null;
                 }
             });
 
