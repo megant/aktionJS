@@ -40,7 +40,7 @@ or:
 <div class="changeMe">I'm visible!</div>
 ```
 
-[Check out some cool examples!](#wanna-play-with-some-cool-examples?)
+[Check out some cool examples!](#markdown-header-wanna-play-with-some-cool-examples)
 
 The only thing you have to do to make it come true is:
 

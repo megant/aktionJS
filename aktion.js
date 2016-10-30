@@ -646,10 +646,11 @@ var Aktion = function(customConfig) {
 
                         if (element.type != 'remove' && current_idx < 0) {
                             action_value = ((attr !== null && attr.length > 0) ? attr + ' ' : '') + value;
-                        }
-                        else if (element.type != 'add' && current_idx > -1) {
+                        } else if (element.type != 'add' && current_idx > -1) {
                             current_values.splice(current_idx, 1);
                             action_value = current_values.join(" ");
+                        } else {
+                            return false;
                         }
                     } else {
                         action_value = value;
