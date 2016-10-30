@@ -431,7 +431,7 @@ var Aktion = function(customConfig) {
      * @param {int} index The index of the current scroll_element (from scrollElements)
      * @return {boolean} True if scroll event condition is fulfilled, false if not
      */
-    var checkScrollEvent = function (index) {
+    var checkScrollEvent = function (index, event_type) {
 
         var condition, direction;
         var element = scrollElements[index];
@@ -449,6 +449,9 @@ var Aktion = function(customConfig) {
         }
 
         if (null === direction && element.lastDirection === null) {
+            if (event_type == "scrollstart") {
+                element.scrollContainer.trigger('scrollend');
+            }
             return false;
         }
 
@@ -783,13 +786,14 @@ var Aktion = function(customConfig) {
 
             element.scrollContent = (element.source_selector == 'window' || element.source_selector == 'document') ? document : elm;
 
-            element.scrollContainer.on('touchstart mousedown', function (evt) {
+            element.scrollContainer.on('touchstart mousedown scrollstart', function (evt) {
 
                 if (null === scrollInterval) {
 
                     scrollInterval = setInterval(function () {
+
                         for (var index in scrollElements) {
-                            if (checkScrollEvent(index)) {
+                            if (checkScrollEvent(index, evt.type)) {
                                 addToActionQueue(scrollElements[index], scrollElements[index].sourceElm);
                             }
                         }
@@ -797,12 +801,19 @@ var Aktion = function(customConfig) {
                 }
             });
 
-            element.scrollContainer.on('touchend touchcancel mouseup', function (evt) {
+            element.scrollContainer.on('touchend touchcancel mouseup scrollend', function (evt) {
 
                 if (null !== scrollInterval) {
                     clearInterval(scrollInterval);
                     scrollInterval = null;
                     element.lastY = null;
+                }
+            });
+
+            element.scrollContainer.on('scroll', function(evt) {
+                
+                if (null === scrollInterval) {
+                    element.scrollContainer.trigger('scrollstart');
                 }
             });
 
