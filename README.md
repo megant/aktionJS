@@ -131,7 +131,7 @@ But what can I do if I want to associate aktions with events other than _"click"
 
 - [Simple button #1 - toggle class]
 - [Simple button #2 - data-aktion-type demo]
-- [Selector demo #1 - data-aktion-destination demo]
+- [Selector demo #1 - data-aktion-destination-selector demo]
 
 ### Available data-aktion-* attributes
 
@@ -180,4 +180,4 @@ _(can be used in data-aktion-event attribute)_
 
 [Simple button #1 - toggle class]: <https://jsfiddle.net/megant/c1y7d9k1/>
 [Simple button #2 - data-aktion-type demo]: <https://jsfiddle.net/megant/x8eLyrdz/>
-[Selector demo #1 - data-aktion-destination demo]: <https://jsfiddle.net/megant/jLjdztja/>
+[Selector demo #1 - data-aktion-destination-selector demo]: <https://jsfiddle.net/megant/jLjdztja/>
