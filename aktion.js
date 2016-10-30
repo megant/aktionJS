@@ -605,7 +605,8 @@ var Aktion = function(customConfig) {
             value,
             current_values,
             current_idx,
-            action_value;
+            action_value,
+            affected_elements;
 
         // get value from source's attribute if present
         if (element.value_type == 'attribute') {
@@ -619,15 +620,19 @@ var Aktion = function(customConfig) {
             values = value_data.split(",");
             var boolean_attributes = ['checked', 'selected', 'disabled'];
 
+            if (element.destination_selector === null && element.destElm.length > 1) {
+                affected_elements = _this;
+            } else {
+                affected_elements = element.destElm;
+            }
+
             for (var idx in values) {
 
                 value = values[idx].trim();
 
-                Helpers.forEach(element.destElm, function (elm, index) {
+                Helpers.forEach(affected_elements, function (elm, index) {
 
-                    $this = (element.destination_selector === null) ? _this : elm;
-
-                    attr = $this.getAttribute(element.attribute);
+                    attr = elm.getAttribute(element.attribute);
 
                     if (null !== attr) {
                         current_values = attr.split(" ");
@@ -642,9 +647,8 @@ var Aktion = function(customConfig) {
                         if (element.type != 'remove' && current_idx < 0) {
                             action_value = ((attr !== null && attr.length > 0) ? attr + ' ' : '') + value;
                         } else if (element.type != 'add' && current_idx > -1) {
-
                             if (boolean_attributes.indexOf(element.attribute) > -1) {
-                                $this[element.attribute] = false;
+                                elm[element.attribute] = false;
                                 return;
                             }
 
@@ -657,7 +661,7 @@ var Aktion = function(customConfig) {
                         action_value = value;
                     }
 
-                    $this.setAttribute(element.attribute, action_value);
+                    elm.setAttribute(element.attribute, action_value);
                 });
             }
 
