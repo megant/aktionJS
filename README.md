@@ -129,7 +129,8 @@ But what can I do if I want to associate aktions with events other than _"click"
 #### Advanced usage
 ##### Wanna play with some cool examples?
 
-- [Simple button toggle class]
+- [Simple button #1 - toggle class]
+- [Simple button #2 - data-aktion-type demo]
 
 ### Available data-aktion-* attributes
 
@@ -176,4 +177,5 @@ _(can be used in data-aktion-event attribute)_
 - **data-aktion-type="trigger-event"** cannot trigger scroll events (because those are not classical events)
 - Event delegation is attached to **"body"** DOM element (not document)
 
-[Simple button toggle class]: <https://jsfiddle.net/megant/c1y7d9k1/13/>
+[Simple button #1 - toggle class]: <https://jsfiddle.net/megant/c1y7d9k1/>
+[Simple button #2 - data-aktion-type demo]: <https://jsfiddle.net/megant/x8eLyrdz/>
