@@ -609,13 +609,7 @@ var Aktion = function(customConfig) {
 
         // get value from source's attribute if present
         if (element.value_type == 'attribute') {
-            var attribute = _this.getAttribute(element.value);
-
-            if (null !== attribute) {
-                value_data = attribute;
-            } else {
-                return false;
-            }
+            value_data = _this.getAttribute(element.value);
         } else {
             value_data = element.value;
         }
@@ -623,6 +617,7 @@ var Aktion = function(customConfig) {
         if (element.type != 'trigger-event') {
 
             values = value_data.split(",");
+            var boolean_attributes = ['checked', 'selected', 'disabled'];
 
             for (var idx in values) {
 
@@ -647,6 +642,12 @@ var Aktion = function(customConfig) {
                         if (element.type != 'remove' && current_idx < 0) {
                             action_value = ((attr !== null && attr.length > 0) ? attr + ' ' : '') + value;
                         } else if (element.type != 'add' && current_idx > -1) {
+
+                            if (boolean_attributes.indexOf(element.attribute) > -1) {
+                                $this[element.attribute] = false;
+                                return;
+                            }
+
                             current_values.splice(current_idx, 1);
                             action_value = current_values.join(" ");
                         } else {
