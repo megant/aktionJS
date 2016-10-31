@@ -113,7 +113,9 @@ var Aktion = function(customConfig) {
         isIOS: false,
         actionCheckInProgress: false,
         // data-action-name counter (if data-action-name is not present)
-        elementNameCounter: 0
+        elementNameCounter: 0,
+        // 0: inactive, 1: active, 2: in progress, 3: stopped
+        scrollStatus: 0
     };
 
     /** Touch position indicators for mobile events */
@@ -219,19 +221,29 @@ var Aktion = function(customConfig) {
         },
 
         /**
-         * Get outer height of an element
+         * Get height of an element
          *
          * @param {DOM object} el DOM object
          * @returns {number}
          */
-        getOuterHeight: function (el) {
-            if (el == window || el == document) return el.offsetHeight;
+        getHeight: function (el) {
+            var height;
 
-            var height = el.offsetHeight;
+            if (el == window) {
+                height = el.innerHeight;
 
-            var style = getComputedStyle(el);
+            } else if (el == document) {
 
-            height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+                height = this.getDocumentDimension('height');
+
+            } else {
+                height = el.offsetHeight;
+
+                var style = getComputedStyle(el);
+
+                height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+            }
+
             return height;
         },
 
@@ -440,7 +452,7 @@ var Aktion = function(customConfig) {
             element.scrollContainer.scrollTop = Helpers.getWindowScrollTop();
         }
 
-        if (element.lastY < element.scrollContainer.scrollTop) {
+        if (null !== element.lastY && element.lastY < element.scrollContainer.scrollTop) {
             direction = 1;
         } else if (element.lastY > element.scrollContainer.scrollTop) {
             direction = -1;
@@ -448,54 +460,63 @@ var Aktion = function(customConfig) {
             direction = null;
         }
 
-        if (null === direction && element.lastDirection === null) {
+        var scroll_status = indicators.scrollStatus;
+        var scroll_stopped = (scroll_status > 1 && null === direction);
+
+        if (scroll_stopped && (element.lastDirection === null || (element.event == 'scroll-reached-bottom' || element.event == 'scroll-reached-top'))) {
+
             if (event_type == "scrollstart") {
                 element.scrollContainer.trigger('scrollend');
             }
+
             return false;
         }
 
         // Browser's top position bouncing is not a scroll event
-        if (element.scrollContainer.scrollTop < 0 || element.scrollContainer.scrollTop + Helpers.getOuterHeight(element.scrollContent) > Helpers.getDocumentDimension('height')) {
+        if (element.scrollContainer.scrollTop < 0 || element.scrollContainer.scrollTop + Helpers.getHeight(element.scrollContainer) > Helpers.getDocumentDimension('height')) {
             return false;
         }
 
         switch (element.event) {
             case 'scroll-start':
-                condition = (null === element.lastY && element.scrollContainer.scrollTop > 0);
+                condition = (scroll_status == 1 && element.scrollContainer.scrollTop > 0);
                 break;
             case 'scroll-stop':
-                condition = (null !== element.lastY && null === direction);
+                condition = (scroll_status > 1 && null === direction);
                 break;
             case 'scroll':
-                condition = (null !== element.lastY && null !== direction);
+                condition = (scroll_status > 1 && null !== direction);
                 break;
             case 'scroll-up':
-                condition = (null !== element.lastY && direction == 1);
+                condition = (scroll_status > 1 && direction == -1);
                 break;
             case 'scroll-down':
-                condition = (null !== element.lastY && direction == -1);
+                condition = (scroll_status > 1 && direction == 1);
                 break;
             case 'scroll-dir-change':
-                condition = (null !== element.lastY && ((element.lastDirection != 1 && direction == 1) || (element.lastDirection != -1 && direction == -1)));
+                condition = (scroll_status > 1 && ((element.lastDirection == -1 && direction == 1) || (element.lastDirection == 1 && direction == -1)));
                 break;
             case 'scroll-dir-change-up':
-                condition = (null !== element.lastY && element.lastDirection != 1 && direction == 1);
+                condition = (scroll_status > 1 && element.lastDirection == 1 && direction == -1);
                 break;
             case 'scroll-dir-change-down':
-                condition = (null !== element.lastY && element.lastDirection != -1 && direction == -1);
+                condition = (scroll_status > 1 && element.lastDirection == -1 && direction == 1);
                 break;
             case 'scroll-reached-top':
-                condition = (null !== element.lastY && element.lastDirection != 1 && element.scrollContainer.scrollTop == 0);
+                condition = (scroll_status > 1 && element.lastDirection != 1 && element.scrollContainer.scrollTop == 0);
                 break;
             case 'scroll-reached-bottom':
-                condition = (null !== element.lastY && element.lastDirection != -1 && element.scrollContainer.scrollTop + element.scrollContainer.offsetHeight == element.scrollContent.offsetHeight);
+                condition = (scroll_status > 1 && element.lastDirection != -1 && element.scrollContainer.scrollTop + Helpers.getHeight(element.scrollContainer) == Helpers.getHeight(element.scrollContent));
                 break;
 
         }
 
         scrollElements[index].lastDirection = direction;
         scrollElements[index].lastY = element.scrollContainer.scrollTop;
+
+        if (scroll_status == 1 && null !== direction) {
+            indicators.scrollStatus = 2;
+        }
 
         return (element.extra_condition() && condition);
     }
@@ -790,6 +811,8 @@ var Aktion = function(customConfig) {
 
                 if (null === scrollInterval) {
 
+                    indicators.scrollStatus = 1;
+
                     scrollInterval = setInterval(function () {
 
                         for (var index in scrollElements) {
@@ -807,11 +830,12 @@ var Aktion = function(customConfig) {
                     clearInterval(scrollInterval);
                     scrollInterval = null;
                     element.lastY = null;
+                    indicators.scrollStatus = 0;
                 }
             });
 
             element.scrollContainer.on('scroll', function(evt) {
-                
+
                 if (null === scrollInterval) {
                     element.scrollContainer.trigger('scrollstart');
                 }
@@ -868,7 +892,11 @@ var Aktion = function(customConfig) {
         }
     }
 
-    var api = {};
+    var api = {
+        activate: function() {
+            return _activate();
+        }
+    };
 
     init();
 
