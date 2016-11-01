@@ -106,7 +106,11 @@ var Aktion = (function(customConfig) {
     var AktionBase = function(customConfig) {
 
         /** "Private" properties **/
+
+        /** Scroll position checker interval **/
         var scrollInterval = null;
+
+        /** Collection of elements with custom scroll events **/
         var scrollElements = [];
 
         /** Aktion-wide indicators */
@@ -153,15 +157,22 @@ var Aktion = (function(customConfig) {
             extra_condition: (function () {return true})
         };
 
-        // currently triggering actions queue
+        /** currently triggering aktions queue */
         var actionQueue = {};
 
+        /** aktion order container array */
         var actionOrder = [];
 
         /** Helper methods **/
-
         var Helpers = {
 
+            /**
+             * Log to the console
+             *
+             * @param {string} message Log message
+             * @param {object} data Log data object
+             * @returns {boolean} false if debug mode is disabled
+             */
             log: function(message, data) {
                 if (!config.debugMode) {
                     return false;
@@ -214,8 +225,8 @@ var Aktion = (function(customConfig) {
             /**
              * Cross-browser pointer event getter
              *
-             * @param {Event} event
-             * @returns {Event}
+             * @param {Event} event Event object
+             * @returns {Event} Browser compatible pointer event object
              */
             getPointerEvent: function (event) {
                 return event.targetTouches ? event.targetTouches[0] : event;
@@ -225,7 +236,7 @@ var Aktion = (function(customConfig) {
              * Get height of an element
              *
              * @param {DOM object} el DOM object
-             * @returns {number}
+             * @returns {number} Height in pixels
              */
             getHeight: function (el) {
                 var height;
@@ -267,7 +278,7 @@ var Aktion = (function(customConfig) {
             /**
              * iOS platform check
              *
-             * @returns {boolean}
+             * @returns {boolean} True if platform is iOS
              */
             checkIOS: function () {
                 return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -277,7 +288,7 @@ var Aktion = (function(customConfig) {
              * Get delegator DOM element (if needed)
              *
              * @param {string} source_selector Source element selector string
-             * @returns {*}
+             * @returns {DOM object} Delegator DOM object
              */
             getDelegatorDOMElement: function (source_selector) {
 
@@ -292,7 +303,9 @@ var Aktion = (function(customConfig) {
              * Get aktion attribute value
              *
              * @param {DOM element}
-             * @param {string} attr attribute of aktion
+             * @param {string} attr attribute of Aktion
+             *
+             * @returns Aktion attribute
              */
             getAttr: function (elm, attr) {
                 var fullAttribute = this.getAttrName(attr);
@@ -303,14 +316,21 @@ var Aktion = (function(customConfig) {
             /**
              * Get full aktion data attribute name
              *
-             * @param attr
-             * @returns {string}
+             * @param {string} attr Short attribute name
+             * @returns {string} Full aktion data attribute name
              */
             getAttrName: function (attr) {
                 return 'data-' + config.dataAttributePrefix + '-' + attr;
             },
 
-            forEach: function (array, callback, scope) {
+            /**
+             * Cross-browser foreach method for old browsers
+             *
+             * @oaram {array} array Array which will be looped thru
+             * @param {function} callback Callback function
+             * @param {object} scope Optional scope object
+             */
+             forEach: function (array, callback, scope) {
                 if (undefined === array.length) {
                     array = [array];
                 }
@@ -320,6 +340,11 @@ var Aktion = (function(customConfig) {
                 }
             },
 
+            /**
+             * Get window scroll top property
+             *
+             * @returns {integer} Scroll top property in pixels
+             */
             getWindowScrollTop: function() {
                 return (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
             }
@@ -339,7 +364,6 @@ var Aktion = (function(customConfig) {
 
         /**
          * Activate aktion events
-         *
          */
         var _activate = function () {
             var $aktions = $('[' + Helpers.getAttrName('value') + ']');
@@ -441,7 +465,8 @@ var Aktion = (function(customConfig) {
         /**
          * Custom scroll event checking
          *
-         * @param {int} index The index of the current scroll_element (from scrollElements)
+         * @param {integer} index The index of the current scroll_element (from scrollElements)
+         * @param {string} event_type Event type name
          * @return {boolean} True if scroll event condition is fulfilled, false if not
          */
         var checkScrollEvent = function (index, event_type) {
@@ -893,7 +918,14 @@ var Aktion = (function(customConfig) {
             }
         }
 
+        /** Public methods and properties **/
         var api = {
+
+            /**
+             * Activate Aktion
+             *
+             * @returns {function} _activate private method
+             */
             activate: function() {
                 return _activate();
             }
